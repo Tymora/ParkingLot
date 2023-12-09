@@ -1,36 +1,68 @@
 package parking
 
 
-
 fun main() {
     val lot = Parking()
-    var parsing = mutableListOf<String>()
-    parsing = readln().split(" ").toMutableList()
-    when (parsing[0]) {
-        "park" -> lot.park()
-        "leave" -> lot.unpark()
+    while (true) {
+        val command = readln()
+        when {
+            command.startsWith("park") -> {
+                val parsed = command.split(" ")
+                val car = Car(parsed[1], parsed[2])
+                lot.park(car)
+            }
+
+            command.startsWith("leave") -> {
+                val slot = command.substring(5).trim().toInt()
+
+                lot.unpark(slot)
+            }
+        }
     }
 }
 
-class Parking(var parsing: MutableList<String>) {
+class Parking {
 
-    var spot1: Car? = null
-    var spot2: Car? = null
+    private var spot1: Car? = null
+    private var spot2: Car? = null
 
-    fun park() {
+    fun park(car: Car) {
         when {
-            spot1 == null -> spot1 = Car(parsing[1], parsing[2])
-            spot2 == null -> spot2 = Car(parsing[1], parsing[2])
+            spot1 == null -> {
+                spot1 = car
+                println("${car.color} car parked in slot 1")
+            }
+
+            spot2 == null -> {
+                spot2 = car
+                println("${car.color} car parked in slot 2")
+            }
+
             else -> throw Exception("Not free spots")
         }
     }
 
-    fun unpark() {
-        when (parsing[1]) {
-            "1" -> spot1 = null
-            "2" -> spot1 = null
+    fun unpark(slot: Int) {
+        when (slot) {
+            1 -> {
+                if (spot1 == null) {
+                    println("There is no car in slot 1")
+                } else {
+                    spot1 = null
+                    println("Slot 1 is free.")
+                }
+            }
+
+            2 -> {
+                if (spot2 == null) {
+                    println("There is no car in slot 2")
+                } else {
+                    spot2 = null
+                    println("Slot 2 is free.")
+                }
+            }
+            else -> throw Exception("Wrong slot!")
         }
-        println("Spot ${parsing[1]} is free.")
     }
 }
 
