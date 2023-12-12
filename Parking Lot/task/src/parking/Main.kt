@@ -13,9 +13,9 @@ fun main() {
             }
 
             command.startsWith("leave") -> {
-                val slot = command.substring(5).trim().toInt()
+                val placeNumber = command.substring(5).trim().toInt()
 
-                lot.unpark(slot)
+                lot.unpark(placeNumber)
             }
             command.startsWith("exit") -> break
         }
@@ -24,46 +24,32 @@ fun main() {
 
 class Parking {
 
-    private var spot1: Car? = null
-    private var spot2: Car? = null
+
+    private var spot = mutableListOf<Car?>() // todo нужно заполнить его нулевыми значениями в количестве двадцать штук....
+
 
     fun park(car: Car) {
-        when {
-            spot1 == null -> {
-                spot1 = car
-                println("${car.color} car parked in slot 1")
+        var freeSlot = -1
+        for (index in spot.indices) {
+            if (spot[index] == null) {
+                freeSlot = index
+                println("${car.color} car parked in slot ${index + 1}")
+                break
             }
-
-            spot2 == null -> {
-                spot2 = car
-                println("${car.color} car parked in slot 2")
-            }
-
-            else -> throw Exception("Not free spots")
         }
+        if (freeSlot != -1) {
+            spot[freeSlot] = car
+        } else println("Not free spots")
+
     }
 
-    fun unpark(slot: Int) {
-        when (slot) {
-            1 -> {
-                if (spot1 == null) {
-                    println("There is no car in slot 1")
-                } else {
-                    spot1 = null
-                    println("Slot 1 is free.")
-                }
-            }
+    fun unpark(placeNumber: Int) {
+        val indexSlot = placeNumber - 1
+        if (spot[indexSlot] != null) {
+            spot[indexSlot] = null
+            println("Slot $placeNumber is free.")
+        } else println("There is no car in slot $placeNumber")
 
-            2 -> {
-                if (spot2 == null) {
-                    println("There is no car in slot 2")
-                } else {
-                    spot2 = null
-                    println("Slot 2 is free.")
-                }
-            }
-            else -> throw Exception("Wrong slot!")
-        }
     }
 }
 
