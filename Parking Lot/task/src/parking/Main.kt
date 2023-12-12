@@ -17,6 +17,7 @@ fun main() {
 
                 lot.unpark(slot)
             }
+            command.startsWith("exit") -> break
         }
     }
 }
@@ -66,4 +67,4 @@ class Parking {
     }
 }
 
-data class Car(val reg_number: String?, val color: String?)
+data class Car(val reg_number: String, val color: String)
