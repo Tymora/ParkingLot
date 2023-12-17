@@ -25,7 +25,7 @@ fun main() {
 class Parking {
 
 
-    private var spot = mutableListOf<Car?>() // todo нужно заполнить его нулевыми значениями в количестве двадцать штук....
+    private var spot =  arrayOfNulls<Car?>(20)
 
 
     fun park(car: Car) {
