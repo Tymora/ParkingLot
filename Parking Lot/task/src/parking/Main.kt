@@ -1,13 +1,12 @@
 package parking
 
-
+var countSlots = 0 // У меня выпадает Expecting an element; looking at ERROR_ELEMENT '(1,14) in /fragment.kt  пытаюсь пофиксить
 fun main() {
-    var countSlots = 0
-    val lot = Parking(countSlots)
+    val lot = Parking()
     while (countSlots == 0) {
         val createInput = readln()
         when {
-            createInput.startsWith("create") -> countSlots = createInput.padEnd(3).toInt() // >_< Exception
+            createInput.startsWith("create") -> countSlots = createInput.substring(6).trim().toInt() // >_< Exception
             else -> println("Sorry, a parking lot has not been created.")
             // todo Нужно добавить проверку что вводится значение выше нуля
         }
@@ -32,7 +31,7 @@ fun main() {
     }
 }
 
-class Parking(countSlots: Int) {
+class Parking {
 
 
     private var spot = arrayOfNulls<Car?>(countSlots)
