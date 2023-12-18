@@ -6,7 +6,7 @@ fun main() {
     while (countSlots == 0) {
         val createInput = readln()
         when {
-            createInput.startsWith("create") ->{
+            createInput.startsWith("create") -> {
                 countSlots = createInput.substring(6).trim().toInt()
                 println("Created a parking lot with $countSlots spots.")
             }
@@ -14,7 +14,7 @@ fun main() {
             // todo Нужно добавить проверку что вводится значение выше нуля
         }
     }
-    val lot = Parking() //Возможно стоит его перенести между 11 и 12 строчками?
+    val lot = Parking() //Возможно стоит его перенести в строку после 11 строчки?
     while (true) {
         val command = readln()
         when {
@@ -65,14 +65,14 @@ class Parking {
 
     }
 
-    fun status (countSlots: Int){
+    fun status(countSlots: Int) {
         var check = 0
-        for (index in spot.indices){
-            if (spot[index] != null){
-                println("${index+1}${spot[index]}") //todo переделать вывод что бы формат был "Номер слота, регистрационный номер, цвет"
+        for (index in spot.indices) {
+            if (spot[index] != null) {
+                println("${index + 1} ${spot[index]?.reg_number} ${spot[index]?.color}")
             } else check++
         }
-        if(check == countSlots){
+        if (check == countSlots) {
             println("Parking lot is empty")
         }
     }
