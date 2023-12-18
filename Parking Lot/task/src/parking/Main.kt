@@ -1,16 +1,20 @@
 package parking
 
-var countSlots = 0 // У меня выпадает Expecting an element; looking at ERROR_ELEMENT '(1,14) in /fragment.kt  пытаюсь пофиксить
+var countSlots = 0
 fun main() {
-    val lot = Parking()
+
     while (countSlots == 0) {
         val createInput = readln()
         when {
-            createInput.startsWith("create") -> countSlots = createInput.substring(6).trim().toInt() // >_< Exception
+            createInput.startsWith("create") ->{
+                countSlots = createInput.substring(6).trim().toInt()
+                println("Created a parking lot with $countSlots spots.")
+            }
             else -> println("Sorry, a parking lot has not been created.")
             // todo Нужно добавить проверку что вводится значение выше нуля
         }
     }
+    val lot = Parking() //Возможно стоит его перенести между 11 и 12 строчками?
     while (true) {
         val command = readln()
         when {
@@ -63,9 +67,9 @@ class Parking {
 
     fun status (countSlots: Int){
         var check = 0
-        for (item in spot){
-            if (item != null){
-                println(item)
+        for (index in spot.indices){
+            if (spot[index] != null){
+                println("${index+1}${spot[index]}") //todo переделать вывод что бы формат был "Номер слота, регистрационный номер, цвет"
             } else check++
         }
         if(check == countSlots){
