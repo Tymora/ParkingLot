@@ -2,7 +2,16 @@ package parking
 
 
 fun main() {
-    val lot = Parking()
+    var countSlots = 0
+    val lot = Parking(countSlots)
+    while (countSlots == 0) {
+        val createInput = readln()
+        when {
+            createInput.startsWith("create") -> countSlots = createInput.padEnd(3).toInt() // >_< Exception
+            else -> println("Sorry, a parking lot has not been created.")
+            // todo Нужно добавить проверку что вводится значение выше нуля
+        }
+    }
     while (true) {
         val command = readln()
         when {
@@ -13,19 +22,20 @@ fun main() {
             }
 
             command.startsWith("leave") -> {
-                val placeNumber = command.substring(5).trim().toInt()
+                val placeNumber = command.substring(5).trim().toInt() // А если цифра больше 9?
 
                 lot.unpark(placeNumber)
             }
+            command.startsWith("status") -> lot.status(countSlots)
             command.startsWith("exit") -> break
         }
     }
 }
 
-class Parking {
+class Parking(countSlots: Int) {
 
 
-    private var spot =  arrayOfNulls<Car?>(20)
+    private var spot = arrayOfNulls<Car?>(countSlots)
 
 
     fun park(car: Car) {
@@ -50,6 +60,18 @@ class Parking {
             println("Slot $placeNumber is free.")
         } else println("There is no car in slot $placeNumber")
 
+    }
+
+    fun status (countSlots: Int){
+        var check = 0
+        for (item in spot){
+            if (item != null){
+                println(item)
+            } else check++
+        }
+        if(check == countSlots){
+            println("Parking lot is empty")
+        }
     }
 }
 
