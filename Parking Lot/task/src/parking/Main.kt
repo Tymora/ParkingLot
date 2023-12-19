@@ -2,61 +2,39 @@ package parking
 
 var countSlots = 0
 fun main() {
-
-    create()
-    comandCentre()
-
-
-}
-fun comandCentre(lot: Class<Car>){
+    val lot = Parking()
+    var spot = arrayOfNulls<Car?>(countSlots)
     while (true) {
         val command = readln()
         when {
+            command.startsWith("create") -> {
+                countSlots = command.substring(6).trim().toInt()
+                println("Created a parking lot with $countSlots spots.")
+                spot(countSlots) ///АРРРГХ!
+                // todo Нужно добавить проверку что вводится значение выше нуля
+            }
             command.startsWith("park") -> {
                 val parsed = command.split(" ")
                 val car = Car(parsed[1], parsed[2])
-                lot.park(car)
+                lot.park(car, spot)
             }
 
             command.startsWith("leave") -> {
-                val placeNumber = command.substring(5).trim().toInt() // А если цифра больше 9?
+                val placeNumber =
+                    command.substring(5).trim().toInt()
 
-                lot.unpark(placeNumber)
+                lot.unpark(placeNumber, spot)
             }
-            command.startsWith("status") -> lot.status(countSlots)
-            command.startsWith("create") -> {
-                countSlots = 0
-                create()
-                val lot = Parking()
-            }
+            command.startsWith("status") -> lot.status(countSlots, spot)
             command.startsWith("exit") -> break
-        }
-    }
-}
-
-fun create() {
-    while (countSlots == 0) {
-        val createInput = readln()
-        when {
-            createInput.startsWith("create") -> {
-                countSlots = createInput.substring(6).trim().toInt()
-                println("Created a parking lot with $countSlots spots.")
-                val lot = Parking()
-            }
             else -> println("Sorry, a parking lot has not been created.")
-            // todo Нужно добавить проверку что вводится значение выше нуля
         }
     }
 }
-
 
 class Parking {
 
-
-    private var spot = arrayOfNulls<Car?>(countSlots)
-
-
-    fun park(car: Car) {
+    fun park(car: Car, spot: Array<Car?>) {
         var freeSlot = -1
         for (index in spot.indices) {
             if (spot[index] == null) {
@@ -71,7 +49,7 @@ class Parking {
 
     }
 
-    fun unpark(placeNumber: Int) {
+    fun unpark(placeNumber: Int, spot: Array<Car?>) {
         val indexSlot = placeNumber - 1
         if (spot[indexSlot] != null) {
             spot[indexSlot] = null
@@ -80,7 +58,7 @@ class Parking {
 
     }
 
-    fun status(countSlots: Int) {
+    fun status(countSlots: Int, spot: Array<Car?>) {
         var check = 0
         for (index in spot.indices) {
             if (spot[index] != null) {
