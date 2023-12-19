@@ -3,29 +3,28 @@ package parking
 var countSlots = 0
 fun main() {
     val lot = Parking()
-    var spot = arrayOfNulls<Car?>(countSlots)
+
     while (true) {
         val command = readln()
         when {
             command.startsWith("create") -> {
                 countSlots = command.substring(6).trim().toInt()
                 println("Created a parking lot with $countSlots spots.")
-                spot(countSlots) ///АРРРГХ!
-                // todo Нужно добавить проверку что вводится значение выше нуля
+                lot.createSpot(if (countSlots > 0) countSlots else 0)
             }
             command.startsWith("park") -> {
                 val parsed = command.split(" ")
                 val car = Car(parsed[1], parsed[2])
-                lot.park(car, spot)
+                lot.park(car)
             }
 
             command.startsWith("leave") -> {
                 val placeNumber =
                     command.substring(5).trim().toInt()
 
-                lot.unpark(placeNumber, spot)
+                lot.unpark(placeNumber)
             }
-            command.startsWith("status") -> lot.status(countSlots, spot)
+            command.startsWith("status") -> lot.status(countSlots)
             command.startsWith("exit") -> break
             else -> println("Sorry, a parking lot has not been created.")
         }
@@ -33,8 +32,12 @@ fun main() {
 }
 
 class Parking {
+    private var spot = arrayOfNulls<Car?>(0)
+    fun createSpot(countSlots: Int) {
+        spot = arrayOfNulls(countSlots)
+    }
 
-    fun park(car: Car, spot: Array<Car?>) {
+    fun park(car: Car) {
         var freeSlot = -1
         for (index in spot.indices) {
             if (spot[index] == null) {
@@ -49,7 +52,7 @@ class Parking {
 
     }
 
-    fun unpark(placeNumber: Int, spot: Array<Car?>) {
+    fun unpark(placeNumber: Int) {
         val indexSlot = placeNumber - 1
         if (spot[indexSlot] != null) {
             spot[indexSlot] = null
@@ -58,7 +61,7 @@ class Parking {
 
     }
 
-    fun status(countSlots: Int, spot: Array<Car?>) {
+    fun status(countSlots: Int) {
         var check = 0
         for (index in spot.indices) {
             if (spot[index] != null) {
