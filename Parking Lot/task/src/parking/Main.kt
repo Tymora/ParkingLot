@@ -2,22 +2,16 @@ package parking
 
 var countSlots = 0
 fun main() {
+    val lot = Parking()
 
-    while (countSlots == 0) {
-        val createInput = readln()
-        when {
-            createInput.startsWith("create") -> {
-                countSlots = createInput.substring(6).trim().toInt()
-                println("Created a parking lot with $countSlots spots.")
-            }
-            else -> println("Sorry, a parking lot has not been created.")
-            // todo Нужно добавить проверку что вводится значение выше нуля
-        }
-    }
-    val lot = Parking() //Возможно стоит его перенести в строку после 11 строчки?
     while (true) {
         val command = readln()
         when {
+            command.startsWith("create") -> {
+                countSlots = command.substring(6).trim().toInt()
+                println("Created a parking lot with $countSlots spots.")
+                lot.createSpot(if (countSlots > 0) countSlots else 0)
+            }
             command.startsWith("park") -> {
                 val parsed = command.split(" ")
                 val car = Car(parsed[1], parsed[2])
@@ -25,21 +19,23 @@ fun main() {
             }
 
             command.startsWith("leave") -> {
-                val placeNumber = command.substring(5).trim().toInt() // А если цифра больше 9?
+                val placeNumber =
+                    command.substring(5).trim().toInt()
 
                 lot.unpark(placeNumber)
             }
             command.startsWith("status") -> lot.status(countSlots)
             command.startsWith("exit") -> break
+            else -> println("Sorry, a parking lot has not been created.")
         }
     }
 }
 
 class Parking {
-
-
-    private var spot = arrayOfNulls<Car?>(countSlots)
-
+    private var spot = arrayOfNulls<Car?>(0)
+    fun createSpot(countSlots: Int) {
+        spot = arrayOfNulls(countSlots)
+    }
 
     fun park(car: Car) {
         var freeSlot = -1
