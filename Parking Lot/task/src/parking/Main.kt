@@ -3,18 +3,12 @@ package parking
 var countSlots = 0
 fun main() {
 
-    while (countSlots == 0) {
-        val createInput = readln()
-        when {
-            createInput.startsWith("create") -> {
-                countSlots = createInput.substring(6).trim().toInt()
-                println("Created a parking lot with $countSlots spots.")
-            }
-            else -> println("Sorry, a parking lot has not been created.")
-            // todo Нужно добавить проверку что вводится значение выше нуля
-        }
-    }
-    val lot = Parking() //Возможно стоит его перенести в строку после 11 строчки?
+    create()
+    comandCentre()
+
+
+}
+fun comandCentre(lot: Class<Car>){
     while (true) {
         val command = readln()
         when {
@@ -30,10 +24,31 @@ fun main() {
                 lot.unpark(placeNumber)
             }
             command.startsWith("status") -> lot.status(countSlots)
+            command.startsWith("create") -> {
+                countSlots = 0
+                create()
+                val lot = Parking()
+            }
             command.startsWith("exit") -> break
         }
     }
 }
+
+fun create() {
+    while (countSlots == 0) {
+        val createInput = readln()
+        when {
+            createInput.startsWith("create") -> {
+                countSlots = createInput.substring(6).trim().toInt()
+                println("Created a parking lot with $countSlots spots.")
+                val lot = Parking()
+            }
+            else -> println("Sorry, a parking lot has not been created.")
+            // todo Нужно добавить проверку что вводится значение выше нуля
+        }
+    }
+}
+
 
 class Parking {
 
