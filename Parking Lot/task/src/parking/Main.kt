@@ -1,44 +1,48 @@
 package parking
-// todo  если парковка несоздана должна быть корректная ошибка при использовании других команд.
+
 var countSlots = 0
 fun main() {
     val lot = Parking()
 
     while (true) {
         val command = readln()
-        when {
-            command.startsWith("create") -> {
-                countSlots = command.substring(6).trim().toInt()
-                println("Created a parking lot with $countSlots spots.")
-                lot.createSpot(if (countSlots > 0) countSlots else 0)
-            }
-            command.startsWith("park") -> {
-                val parsed = command.split(" ")
-                val car = Car(parsed[1], parsed[2])
-                lot.park(car)
-            }
+        if (countSlots == 0 && !command.startsWith("create")) {
+            println("Sorry, a parking lot has not been created.")
+        } else {
+            when {
+                command.startsWith("create") -> {
+                    countSlots = command.substring(6).trim().toInt()
+                    println("Created a parking lot with $countSlots spots.")
+                    lot.createSpot(if (countSlots > 0) countSlots else 0)
+                }
+                command.startsWith("park") -> {
+                    val parsed = command.split(" ")
+                    val car = Car(parsed[1], parsed[2])
+                    lot.park(car)
+                }
 
-            command.startsWith("leave") -> {
-                val placeNumber =
-                    command.substring(5).trim().toInt()
+                command.startsWith("leave") -> {
+                    val placeNumber =
+                        command.substring(5).trim().toInt()
 
-                lot.unpark(placeNumber)
+                    lot.unpark(placeNumber)
+                }
+                command.startsWith("reg_by_color") -> {
+                    val color = command.substring(12).trim()
+                    lot.findColor(color, command)
+                }
+                command.startsWith("spot_by_color") -> {
+                    val findColor = command.substring(13).trim()
+                    lot.findColor(findColor, command)
+                }
+                command.startsWith("spot_by_reg") -> {
+                    val regNum = command.substring(11).trim()
+                    lot.findRegNumber(regNum)
+                }
+                command.startsWith("status") -> lot.status(countSlots)
+                command.startsWith("exit") -> break
+                else -> println("Sorry, input is incorrect") // может быть должна быть другая ошибка?
             }
-            command.startsWith("reg_by_color") -> {
-                val color = command.substring(12).trim()
-                lot.findColor(color, command)
-            }
-            command.startsWith("spot_by_color") -> {
-                val findColor = command.substring(13).trim()
-                lot.findColor(findColor, command)
-            }
-            command.startsWith("spot_by_reg") -> {
-                val regNum = command.substring(11).trim()
-                lot.findRegNumber(regNum)
-            }
-            command.startsWith("status") -> lot.status(countSlots)
-            command.startsWith("exit") -> break
-            else -> println("Sorry, a parking lot has not been created.")
         }
     }
 }
@@ -103,8 +107,8 @@ class Parking {
 
     fun findRegNumber(regNum: String) {
         var check = 0
-        for (index in spot.indices){
-            if(spot[index]?.reg_number == regNum){
+        for (index in spot.indices) {
+            if (spot[index]?.reg_number == regNum) {
                 println("${index + 1}")
             } else check++
         }
