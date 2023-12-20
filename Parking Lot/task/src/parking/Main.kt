@@ -1,5 +1,5 @@
 package parking
-
+// todo  если парковка несоздана должна быть корректная ошибка при использовании других команд.
 var countSlots = 0
 fun main() {
     val lot = Parking()
@@ -23,6 +23,18 @@ fun main() {
                     command.substring(5).trim().toInt()
 
                 lot.unpark(placeNumber)
+            }
+            command.startsWith("reg_by_color") -> {
+                val color = command.substring(12).trim()
+                lot.findColor(color, command)
+            }
+            command.startsWith("spot_by_color") -> {
+                val findColor = command.substring(13).trim()
+                lot.findColor(findColor, command)
+            }
+            command.startsWith("spot_by_reg") -> {
+                val regNum = command.substring(11).trim()
+                lot.findRegNumber(regNum)
             }
             command.startsWith("status") -> lot.status(countSlots)
             command.startsWith("exit") -> break
@@ -70,6 +82,34 @@ class Parking {
         }
         if (check == countSlots) {
             println("Parking lot is empty")
+        }
+    }
+
+    fun findColor(color: String, command: String) {
+        var check = 0
+        for (index in spot.indices) {
+            if (spot[index]?.color?.uppercase() == color.uppercase()) {
+                if (command.startsWith("reg_by_color")) {
+                    print("${spot[index]?.reg_number},")
+                } else {
+                    print("${index + 1}, ") //todo придумать как убрать запятую у последней позиции
+                }
+            } else check++
+        }
+        if (check == countSlots) {
+            println("No cars with color $color were found.")
+        }
+    }
+
+    fun findRegNumber(regNum: String) {
+        var check = 0
+        for (index in spot.indices){
+            if(spot[index]?.reg_number == regNum){
+                println("${index + 1}")
+            } else check++
+        }
+        if (check == countSlots) {
+            println("No cars with registration number $regNum were found.")
         }
     }
 }
