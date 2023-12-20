@@ -41,7 +41,7 @@ fun main() {
                 }
                 command.startsWith("status") -> lot.status(countSlots)
                 command.startsWith("exit") -> break
-                else -> println("Sorry, input is incorrect") // может быть должна быть другая ошибка?
+                else -> println("Sorry, input is incorrect.") // может быть должна быть другая ошибка?
             }
         }
     }
@@ -58,13 +58,13 @@ class Parking {
         for (index in spot.indices) {
             if (spot[index] == null) {
                 freeSlot = index
-                println("${car.color} car parked in slot ${index + 1}")
+                println("${car.color} car parked in slot ${index + 1}.")
                 break
             }
         }
         if (freeSlot != -1) {
             spot[freeSlot] = car
-        } else println("Not free spots")
+        } else println("Not free spots.")
 
     }
 
@@ -85,24 +85,25 @@ class Parking {
             } else check++
         }
         if (check == countSlots) {
-            println("Parking lot is empty")
+            println("Parking lot is empty.")
         }
     }
 
     fun findColor(color: String, command: String) {
         var check = 0
+        val output = mutableListOf<String?>()
         for (index in spot.indices) {
             if (spot[index]?.color?.uppercase() == color.uppercase()) {
                 if (command.startsWith("reg_by_color")) {
-                    print("${spot[index]?.reg_number},")
+                    output.add(spot[index]?.reg_number)
                 } else {
-                    print("${index + 1}, ") //todo придумать как убрать запятую у последней позиции
+                    output.add((index+1).toString())
                 }
             } else check++
         }
         if (check == countSlots) {
             println("No cars with color $color were found.")
-        }
+        } else println(output.joinToString(", "))
     }
 
     fun findRegNumber(regNum: String) {
