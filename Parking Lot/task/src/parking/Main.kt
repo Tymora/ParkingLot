@@ -1,59 +1,131 @@
 package parking
 
+
 var countSlots = 0
 fun main() {
     val lot = Parking()
-
     while (true) {
         val command = readln()
-        if (countSlots == 0 && !command.startsWith("create")) {
-            println("Sorry, a parking lot has not been created.")
-        } else {
-            when {
-                command.startsWith("create") -> {
-                    countSlots = command.substring(6).trim().toInt()
-                    println("Created a parking lot with $countSlots spots.")
-                    lot.createSpot(if (countSlots > 0) countSlots else 0)
-                }
-                command.startsWith("park") -> {
-                    val parsed = command.split(" ")
-                    val car = Car(parsed[1], parsed[2])
-                    lot.park(car)
-                }
+        val (pCommand, arg) = when {
+            command.startsWith("create") -> ParsedCommand.CREATE to command.substring(6)
+            command.startsWith("park") -> ParsedCommand.PARK to command.substring(5)
+            command.startsWith("leave") -> ParsedCommand.UNPARK to command.substring(5).trim()
 
-                command.startsWith("leave") -> {
-                    val placeNumber =
-                        command.substring(5).trim().toInt()
+            command.startsWith("status") -> ParsedCommand.STATUS to command.substring(5)
+            command.startsWith("reg_by_color") -> ParsedCommand.FIND_REG_NUMBER_BY_COLOR to command.substring(
+                12
+            ).trim()
 
-                    lot.unpark(placeNumber)
-                }
-                command.startsWith("reg_by_color") -> {
-                    val color = command.substring(12).trim()
-                    lot.findColor(color, command)
-                }
-                command.startsWith("spot_by_color") -> {
-                    val findColor = command.substring(13).trim()
-                    lot.findColor(findColor, command)
-                }
-                command.startsWith("spot_by_reg") -> {
-                    val regNum = command.substring(11).trim()
-                    lot.findRegNumber(regNum)
-                }
-                command.startsWith("status") -> lot.status(countSlots)
-                command.startsWith("exit") -> break
-                else -> println("Sorry, input is incorrect.") // может быть должна быть другая ошибка?
-            }
+            command.startsWith("spot_by_color") -> ParsedCommand.FIND_SLOTS_BY_COLOR to command.substring(
+                13
+            ).trim()
+
+            command.startsWith("spot_by_reg") -> ParsedCommand.FIND_SLOT_BY_REG_NUMBER to command.substring(
+                11
+            ).trim()
+
+            command.startsWith("exit") -> break
+            else -> ParsedCommand.ERROR to "Error"
         }
+        lot.doAction(pCommand, arg)
     }
+
+
+//    while (true) {
+//        val command = readln()
+//        if (countSlots == 0 && !command.startsWith("create")) {
+//            println("Sorry, a parking lot has not been created.")
+//        } else {
+//            when {
+//                command.startsWith("create") -> {
+//                    countSlots = command.substring(6).trim().toInt()
+//                    println("Created a parking lot with $countSlots spots.")
+//                    lot.createSpot(if (countSlots > 0) countSlots else 0)
+//                }
+//                command.startsWith("park") -> {
+//                    val parsed = command.split(" ")
+//                    val car = Car(parsed[1], parsed[2])
+//                    lot.park(car)
+//                }
+//
+//                command.startsWith("leave") -> {
+//                    val placeNumber =
+//                        command.substring(5).trim().toInt()
+//
+//                    lot.unpark(placeNumber)
+//                }
+//                command.startsWith("reg_by_color") -> {
+//                    val color = command.substring(12).trim()
+//                    lot.findColor(color, command)
+//                }
+//                command.startsWith("spot_by_color") -> {
+//                    val findColor = command.substring(13).trim()
+//                    lot.findColor(findColor, command)
+//                }
+//                command.startsWith("spot_by_reg") -> {
+//                    val regNum = command.substring(11).trim()
+//                    lot.findRegNumber(regNum)
+//                }
+//                command.startsWith("status") -> lot.status(countSlots)
+//                command.startsWith("exit") -> break
+//                else -> println("Sorry, input is incorrect.") // может быть должна быть другая ошибка?
+//            }
+//        }
+//    }
+
 }
 
 class Parking {
+
     private var spot = arrayOfNulls<Car?>(0)
-    fun createSpot(countSlots: Int) {
+    private fun createSpot(countSlots: Int) {
         spot = arrayOfNulls(countSlots)
     }
 
-    fun park(car: Car) {
+
+    fun doAction(command: ParsedCommand, argument: String) {
+        when (command) {
+            ParsedCommand.CREATE -> {
+                countSlots = argument.toInt()
+                println("Created a parking lot with $countSlots spots.")
+                this.createSpot(if (countSlots > 0) countSlots else 0)
+            }
+
+            ParsedCommand.PARK -> {
+                val parsed = argument.split(" ")
+                val car = Car(parsed[1], parsed[2])
+                this.park(car)
+            }
+
+            ParsedCommand.UNPARK -> {
+                val placeNumber = argument.toInt()
+                unpark(placeNumber)
+            }
+
+            ParsedCommand.STATUS -> {
+                status(countSlots)
+            }
+
+            ParsedCommand.FIND_REG_NUMBER_BY_COLOR -> {
+                val parsed = argument.split(" ")
+                findColor(parsed[0], parsed[1])
+            }
+
+            ParsedCommand.FIND_SLOTS_BY_COLOR -> {
+                val parsed = argument.split(" ")
+                findColor(parsed[0], parsed[1])
+            }
+
+            ParsedCommand.FIND_SLOT_BY_REG_NUMBER -> {
+                findRegNumber(argument)
+            }
+
+            ParsedCommand.ERROR -> {}
+
+        }
+    }
+
+    private fun park(car: Car) {
         var freeSlot = -1
         for (index in spot.indices) {
             if (spot[index] == null) {
@@ -68,7 +140,7 @@ class Parking {
 
     }
 
-    fun unpark(placeNumber: Int) {
+    private fun unpark(placeNumber: Int) {
         val indexSlot = placeNumber - 1
         if (spot[indexSlot] != null) {
             spot[indexSlot] = null
@@ -77,11 +149,11 @@ class Parking {
 
     }
 
-    fun status(countSlots: Int) {
+    private fun status(countSlots: Int) {
         var check = 0
         for (index in spot.indices) {
             if (spot[index] != null) {
-                println("${index + 1} ${spot[index]?.reg_number} ${spot[index]?.color}")
+                println("${index + 1} ${spot[index]?.regNumber} ${spot[index]?.color}")
             } else check++
         }
         if (check == countSlots) {
@@ -89,15 +161,15 @@ class Parking {
         }
     }
 
-    fun findColor(color: String, command: String) {
+    private fun findColor(color: String, command: String) {
         var check = 0
         val output = mutableListOf<String?>()
         for (index in spot.indices) {
             if (spot[index]?.color?.uppercase() == color.uppercase()) {
                 if (command.startsWith("reg_by_color")) {
-                    output.add(spot[index]?.reg_number)
+                    output.add(spot[index]?.regNumber)
                 } else {
-                    output.add((index+1).toString())
+                    output.add((index + 1).toString())
                 }
             } else check++
         }
@@ -106,10 +178,10 @@ class Parking {
         } else println(output.joinToString(", "))
     }
 
-    fun findRegNumber(regNum: String) {
+    private fun findRegNumber(regNum: String) {
         var check = 0
         for (index in spot.indices) {
-            if (spot[index]?.reg_number == regNum) {
+            if (spot[index]?.regNumber == regNum) {
                 println("${index + 1}")
             } else check++
         }
@@ -117,6 +189,18 @@ class Parking {
             println("No cars with registration number $regNum were found.")
         }
     }
+
 }
 
-data class Car(val reg_number: String, val color: String)
+enum class ParsedCommand {
+    CREATE,
+    PARK,
+    UNPARK,
+    STATUS,
+    FIND_REG_NUMBER_BY_COLOR,
+    FIND_SLOTS_BY_COLOR,
+    FIND_SLOT_BY_REG_NUMBER,
+    ERROR
+}
+
+data class Car(val regNumber: String, val color: String)
