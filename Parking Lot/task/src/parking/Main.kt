@@ -6,22 +6,22 @@ fun main() {
     while (true) {
         val command = readln()
         val (pCommand, arg) = when {
-            command.startsWith("create") -> ParsedCommand.CREATE to command.substring(6)
-            command.startsWith("park") -> ParsedCommand.PARK to command.substring(5)
-            command.startsWith("leave") -> ParsedCommand.UNPARK to command.substring(5).trim()
+            command.startsWith("create") -> ParsedCommand.CREATE to command.substringAfter(" ")
+            command.startsWith("park") -> ParsedCommand.PARK to command.substringAfter(" ")
+            command.startsWith("leave") -> ParsedCommand.UNPARK to command.substringAfter(" ")
 
-            command.startsWith("status") -> ParsedCommand.STATUS to command.substring(5)
-            command.startsWith("reg_by_color") -> ParsedCommand.FIND_REG_NUMBER_BY_COLOR to command.substring(
-                12
-            ).trim()
+            command.startsWith("status") -> ParsedCommand.STATUS to command.substringAfter(" ")
+            command.startsWith("reg_by_color") -> ParsedCommand.FIND_REG_NUMBER_BY_COLOR to command.substringAfter(
+                " "
+            )
 
-            command.startsWith("spot_by_color") -> ParsedCommand.FIND_SLOTS_BY_COLOR to command.substring(
-                13
-            ).trim()
+            command.startsWith("spot_by_color") -> ParsedCommand.FIND_SLOTS_BY_COLOR to command.substringAfter(
+                " "
+            )
 
-            command.startsWith("spot_by_reg") -> ParsedCommand.FIND_SLOT_BY_REG_NUMBER to command.substring(
-                11
-            ).trim()
+            command.startsWith("spot_by_reg") -> ParsedCommand.FIND_SLOT_BY_REG_NUMBER to command.substringAfter(
+                " "
+            )
 
             command.startsWith("exit") -> break
             else -> ParsedCommand.ERROR to "Error"
