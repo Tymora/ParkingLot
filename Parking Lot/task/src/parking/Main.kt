@@ -1,7 +1,6 @@
 package parking
 
 
-var countSlots = 0
 fun main() {
     val lot = Parking()
     while (true) {
@@ -31,48 +30,6 @@ fun main() {
     }
 
 
-//    while (true) {
-//        val command = readln()
-//        if (countSlots == 0 && !command.startsWith("create")) {
-//            println("Sorry, a parking lot has not been created.")
-//        } else {
-//            when {
-//                command.startsWith("create") -> {
-//                    countSlots = command.substring(6).trim().toInt()
-//                    println("Created a parking lot with $countSlots spots.")
-//                    lot.createSpot(if (countSlots > 0) countSlots else 0)
-//                }
-//                command.startsWith("park") -> {
-//                    val parsed = command.split(" ")
-//                    val car = Car(parsed[1], parsed[2])
-//                    lot.park(car)
-//                }
-//
-//                command.startsWith("leave") -> {
-//                    val placeNumber =
-//                        command.substring(5).trim().toInt()
-//
-//                    lot.unpark(placeNumber)
-//                }
-//                command.startsWith("reg_by_color") -> {
-//                    val color = command.substring(12).trim()
-//                    lot.findColor(color, command)
-//                }
-//                command.startsWith("spot_by_color") -> {
-//                    val findColor = command.substring(13).trim()
-//                    lot.findColor(findColor, command)
-//                }
-//                command.startsWith("spot_by_reg") -> {
-//                    val regNum = command.substring(11).trim()
-//                    lot.findRegNumber(regNum)
-//                }
-//                command.startsWith("status") -> lot.status(countSlots)
-//                command.startsWith("exit") -> break
-//                else -> println("Sorry, input is incorrect.") // может быть должна быть другая ошибка?
-//            }
-//        }
-//    }
-
 }
 
 class Parking {
@@ -86,7 +43,7 @@ class Parking {
     fun doAction(command: ParsedCommand, argument: String) {
         when (command) {
             ParsedCommand.CREATE -> {
-                countSlots = argument.toInt()
+                val countSlots = argument.toInt()
                 println("Created a parking lot with $countSlots spots.")
                 this.createSpot(if (countSlots > 0) countSlots else 0)
             }
@@ -103,7 +60,7 @@ class Parking {
             }
 
             ParsedCommand.STATUS -> {
-                status(countSlots)
+                status()
             }
 
             ParsedCommand.FIND_REG_NUMBER_BY_COLOR -> {
@@ -149,14 +106,14 @@ class Parking {
 
     }
 
-    private fun status(countSlots: Int) {
+    private fun status() {
         var check = 0
         for (index in spot.indices) {
             if (spot[index] != null) {
                 println("${index + 1} ${spot[index]?.regNumber} ${spot[index]?.color}")
             } else check++
         }
-        if (check == countSlots) {
+        if (check == spot.size) {
             println("Parking lot is empty.")
         }
     }
@@ -173,7 +130,7 @@ class Parking {
                 }
             } else check++
         }
-        if (check == countSlots) {
+        if (check == spot.size) {
             println("No cars with color $color were found.")
         } else println(output.joinToString(", "))
     }
@@ -185,7 +142,7 @@ class Parking {
                 println("${index + 1}")
             } else check++
         }
-        if (check == countSlots) {
+        if (check == spot.size) {
             println("No cars with registration number $regNum were found.")
         }
     }
